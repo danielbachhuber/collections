@@ -91,11 +91,7 @@ class Collections {
 		$query = new WP_Query( $query_args );
 		$posts = array();
 		foreach( $query->posts as $post ) {
-
-			$posts[] = array(
-				'ID'           => $post->ID,
-				'post_title'   => $post->post_title,
-				);
+			$posts[ $post->ID ] = $this->get_post_for_json( $post );
 		}
 
 		$this->send_json_success( '', array( 'posts' => $posts ) );
@@ -135,6 +131,27 @@ class Collections {
 	public function render_add_post_modal() {
 
 		echo $this->get_view( 'add-post-modal' );
+
+	}
+
+	/**
+	 * Get a post as its JSON representation
+	 *
+	 * @param mixed $post
+	 */
+	public function get_post_for_json( $post ) {
+
+		if ( is_numeric( $post ) ) {
+			$post = get_post( $post );
+		}
+
+		return array(
+			'ID'             => $post->ID,
+			'post_title'     => $post->post_title,
+			'permalink'      => get_permalink( $post->ID ),
+			'edit_link'      => get_edit_post_link( $post->ID, 'json' ),
+			'user_can_edit'  => current_user_can( 'edit_post', $post->ID ),
+			);
 
 	}
 
