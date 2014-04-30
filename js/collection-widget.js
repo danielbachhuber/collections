@@ -1,8 +1,6 @@
 (function( $ ){
 
-	var collectionWidget = {
-
-		el: $('.collection-widget'),
+	var collectionWidgets = {
 
 		/**
 		 * Initialize the collectionWidget interface
@@ -15,9 +13,11 @@
 
 		bindEvents: function() {
 
-			this.el.on( 'click', 'a.add-post', $.proxy( function( e ) {
+			$('body').on( 'click.collection-add-post', '.collection-widget a.add-post', $.proxy( function( e ) {
 
 				e.preventDefault();
+
+				this.currentWidget = $( e.currentTarget ).closest( '.collection-widget' );
 
 				var modal = collectionAddPostModal.init( this );
 				modal.open();
@@ -33,14 +33,14 @@
 				var data = {
 					post: post
 				};
-				this.el.find('.collection-items').prepend( template( data ) );
+				this.currentWidget.find('.collection-items').prepend( template( data ) );
 			}, this ) );
 
 		}
 
 	};
 
-	collectionWidget.init();
+	collectionWidgets.init();
 
 
 })( jQuery );
