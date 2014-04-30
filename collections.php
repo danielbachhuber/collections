@@ -18,9 +18,48 @@ class Collections {
 
 		if ( ! isset( self::$instance ) ) {
 			self::$instance = new Collections;
+			self::$instance->load();
 		}
 
 		return self::$instance;
+	}
+
+	/**
+	 * Load plugin components
+	 */
+	private function load() {
+
+		$this->require_files();
+		$this->setup_actions();
+
+	}
+
+	/**
+	 * Require plugin files
+	 */
+	private function require_files() {
+
+		require_once dirname( __FILE__ ) . '/php/class-collection.php';
+		require_once dirname( __FILE__ ) . '/php/class-collection-widget.php';
+
+	}
+
+	/**
+	 * Set up plugin actions
+	 */
+	private function setup_actions() {
+
+		add_action( 'widgets_init', array( $this, 'action_widgets_init' ) );
+
+	}
+
+	/**
+	 * Register the widgets
+	 */
+	public function action_widgets_init() {
+
+		register_widget( 'Collection_Widget' );
+
 	}
 
 }
