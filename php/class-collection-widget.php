@@ -40,9 +40,10 @@ class Collection_Widget extends WP_Widget {
 		wp_enqueue_script( 'collection-widget', Collections()->get_url( 'js/collection-widget.js' ), array( 'jquery' ) );
 
 		$vars = array(
-			'title_field_id'     => $this->get_field_id( 'title' ),
-			'title_field_name'   => $this->get_field_name( 'title' ),
-			'title'              => ! empty( $instance['title'] ) ? $instance['title'] : '',
+			'title_field_id'              => $this->get_field_id( 'title' ),
+			'title_field_name'            => $this->get_field_name( 'title' ),
+			'title'                       => ! empty( $instance['title'] ) ? $instance['title'] : '',
+			'collection_items_field_name' => $this->get_field_name( 'collection_items' ),
 			);
 		echo Collections()->get_view( 'widget-form', $vars );
 

@@ -1,3 +1,20 @@
-.collection-widget {
+.collection-widget li.collection-item {
+	background-color: #fafafa;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-bottom: 8px;
+	padding-top: 2px;
+	margin-top: 4px;
+	margin-bottom: 5px;
+	border: 1px solid #e5e5e5;
+}
 
+.collection-widget li.collection-item h5 {
+	font-size: 14px;
+	margin-top: 5px;
+	margin-bottom: 6px;
+}
+
+.collection-widget li.collection-item .collection-item-actions {
+	font-size: 12px;
 }

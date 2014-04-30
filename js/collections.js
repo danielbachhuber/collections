@@ -1,16 +1,18 @@
 (function( $ ){
 
-	collectionManager = {
+	collectionAddPostModal = {
 
-		addPostModalWrap: $( '#collections-add-post-modal-wrap' ),
-		addPostModalBackdrop: $( '#collections-add-post-modal-backdrop' ),
+		wrap: $( '#collections-add-post-modal-wrap' ),
+		backdrop: $( '#collections-add-post-modal-backdrop' ),
+		resultPosts: {},
+		selectedPosts: {},
 
 		/**
-		 * Initialize the collectionManager
+		 * Initialize the collectionAddPostModal
 		 */
-		init: function( el ) {
+		init: function( context ) {
 
-			this.el = $( el );
+			this.context = context;
 
 			return this;
 		},
@@ -18,27 +20,27 @@
 		/**
 		 * Open the modal to add a post to a collection
 		 */
-		openAddPostModal: function() {
+		open: function() {
 
 			// Pre-populate the results
 			this.searchPosts();
 
-			this.addPostModalBackdrop.show();
-			this.addPostModalWrap.show();
+			this.backdrop.show();
+			this.wrap.show();
 
-			this.bindAddPostModalEvents();
+			this.bindEvents();
 
 		},
 
 		/**
 		 * Bind events for the AddPostModal
 		 */
-		bindAddPostModalEvents: function() {
+		bindEvents: function() {
 
 			var liveSearch;
 
 			// Live-ish search results
-			$( '#collections-add-post-search', this.addPostModalWrap ).on( 'keydown.collections-add-post-search', $.proxy( function( e ) {
+			$( '#collections-add-post-search', this.wrap ).on( 'keydown.collections-add-post-search', $.proxy( function( e ) {
 				// Don't allow the input to be submitted
 				if ( e.keyCode == 13 ) {
 					e.preventDefault();
@@ -55,23 +57,34 @@
 			}, this ) );
 
 			// Submitting the form adds the posts to the collection
-			$( 'form', this.addPostModalWrap ).on( 'submit.collections-add-post-submit', $.proxy( function( e ) {
+			$( 'form', this.wrap ).on( 'submit.collections-add-post-submit', $.proxy( function( e ) {
 				e.preventDefault();
+
+				$( 'form input[name="collections-add-post[]"]:checked', this.wrap ).each( $.proxy( function( index, value ){
+					var post_id = $( value ).val();
+					this.selectedPosts[ post_id ] = this.resultPosts[ post_id ];
+				}, this ) );
+
+				if ( typeof this.context.selectPosts == 'function' ) {
+					this.context.selectPosts( this.selectedPosts );
+				}
+
+				this.close();
 
 			}, this ) );
 
 			// Two forms of canceling out of the modal
-			$( '.collections-add-post-cancel', this.addPostModalWrap ).on( 'click.collections-cancel-button', $.proxy( function( e ){
+			$( '.collections-add-post-cancel', this.wrap ).on( 'click.collections-cancel-button', $.proxy( function( e ){
 
 				e.preventDefault();
 
-				this.closeAddPostModal();
+				this.close();
 
 			}, this ) );
 			$('body').on( 'keydown.collections-add-post-escape', $.proxy( function( e ) {
 
 				if ( e.keyCode == 27 ) {
-					this.closeAddPostModal();
+					this.close();
 				}
 
 			}, this ) );
@@ -81,10 +94,12 @@
 		/**
 		 * Unbind events for the AddPostModal
 		 */
-		unbindAddPostModalEvents: function() {
+		unbindEvents: function() {
 
-			$( '.collections-add-post-cancel', this.addPostModalWrap ).off( 'click.collections-cancel-button' );
+			$( '.collections-add-post-cancel', this.wrap ).off( 'click.collections-cancel-button' );
 			$( 'body' ).off( 'keydown.collections-add-post-escape' );
+
+			$( 'form', this.wrap ).off( 'submit.collections-add-post-submit' );
 
 		},
 
@@ -92,13 +107,13 @@
 		 * Close the "Add Post to Collection" modal
 		 * without performing any actions
 		 */
-		closeAddPostModal: function() {
+		close: function() {
 
-			this.unbindAddPostModalEvents();
+			this.unbindEvents();
 
-			this.addPostModalBackdrop.hide();
-			this.addPostModalWrap.hide();
-			$( '#collections-add-post-search', this.addPostModalWrap ).val('');
+			this.backdrop.hide();
+			this.wrap.hide();
+			$( '#collections-add-post-search', this.wrap ).val('');
 
 		},
 
@@ -109,24 +124,28 @@
 
 			var data = {
 				action:   'collections_add_post_search',
-				s:        $( '#collections-add-post-search', this.addPostModalWrap ).val(),
-				nonce:    $( '#collections-add-post-search-nonce', this.addPostModalWrap ).val()
+				s:        $( '#collections-add-post-search', this.wrap ).val(),
+				nonce:    $( '#collections-add-post-search-nonce', this.wrap ).val()
 			};
 
 			$.get( ajaxurl, data, $.proxy( function( response ) {
 
 				if ( response.status == 'success' ) {
 
-					var searchResults = $('#collections-add-post-search-results', this.addPostModalWrap );
+					var searchResults = $('#collections-add-post-search-results', this.wrap );
 					searchResults.empty();
+					this.resultPosts = response.data.posts;
+					this.selectedPosts = {};
 
 					var resultTemplate = wp.template( 'collections-add-post-search-result' );
+					var i = 0;
 					$.each( response.data.posts, $.proxy( function( index, post ) {
 
 						var classes = '';
-						if ( ! index || index % 2 === 0 ) {
+						if ( ! i || i % 2 === 0 ) {
 							classes += 'alternate';
 						}
+						i++;
 
 						var data = {
 							classes: classes,
