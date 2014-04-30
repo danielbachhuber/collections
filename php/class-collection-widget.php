@@ -34,6 +34,13 @@ class Collection_Widget extends WP_Widget {
 	 */
 	public function form( $instance ) {
 
+		$vars = array(
+			'title_field_id'     => $this->get_field_id( 'title' ),
+			'title_field_name'   => $this->get_field_name( 'title' ),
+			'title'              => ! empty( $instance['title'] ) ? $instance['title'] : '',
+			);
+		echo Collections()->get_view( 'widget-form', $vars );
+
 	}
 
 	/**
@@ -46,6 +53,7 @@ class Collection_Widget extends WP_Widget {
 	public function update( $new_instance, $old_instance ) {
 
 		$instance = array();
+		$instance['title'] = ! empty( $new_instance['title'] ) ? sanitize_text_field( $new_instance['title'] ) : '';
 
 		return $instance;
 	}

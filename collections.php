@@ -62,6 +62,26 @@ class Collections {
 
 	}
 
+	/**
+	 * Get the rendering of a given view
+	 *
+	 * @param string $view
+	 * @param array $vars
+	 * @return string
+	 */
+	public function get_view( $view, $vars = array() ) {
+
+		$file_path = dirname( __FILE__ ) . '/views/' . $view . '.tpl.php';
+		if ( ! file_exists( $file_path ) ) {
+			return '';
+		}
+
+		ob_start();
+		extract( $vars );
+		include $file_path;
+		return ob_get_clean();
+	}
+
 }
 
 /**
