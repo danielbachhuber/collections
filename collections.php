@@ -14,6 +14,8 @@ class Collections {
 
 	private static $instance;
 
+	private $did_register_assets = false;
+
 	public static function get_instance() {
 
 		if ( ! isset( self::$instance ) ) {
@@ -49,7 +51,20 @@ class Collections {
 	 */
 	private function setup_actions() {
 
+		add_action( 'admin_enqueue_scripts', array( $this, 'action_enqueue_scripts_register' ) );
 		add_action( 'widgets_init', array( $this, 'action_widgets_init' ) );
+
+	}
+
+	/**
+	 * Register our scripts and styles
+	 */
+	public function action_enqueue_scripts_register() {
+
+		wp_register_script( 'collections', $this->get_url( 'js/collections.js' ), array( 'jquery' ) );
+		wp_register_style( 'collections', $this->get_url( 'css/collections.css' ) );
+
+		$this->did_register_assets = true;
 
 	}
 
@@ -61,6 +76,44 @@ class Collections {
 		register_widget( 'Collection_Widget' );
 
 	}
+
+	/**
+	 * Enqueue all of the necessary assets for the plugin
+	 */
+	public function enqueue_assets() {
+
+		if ( ! $this->did_register_assets ) {
+			$this->action_enqueue_scripts_register();
+		}
+
+		wp_enqueue_script( 'collections' );
+		wp_enqueue_style( 'collections' );
+
+		if ( is_admin() ) {
+			add_action( 'admin_footer', array( $this, 'render_add_post_modal' ) );
+		}
+
+	}
+
+	/**
+	 * Render the HTML associated with the add post modal
+	 */
+	public function render_add_post_modal() {
+
+		echo $this->get_view( 'add-post-modal' );
+
+	}
+
+	/**
+	 * Get the URL for a plugin asset
+	 *
+	 * @param string $path
+	 * @return string
+	 */
+	public function get_url( $path = '' ) {
+		return plugins_url( $path, __FILE__ );
+	}
+
 
 	/**
 	 * Get the rendering of a given view
