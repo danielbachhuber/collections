@@ -124,7 +124,6 @@
 					$.each( response.data.posts, $.proxy( function( index, post ) {
 
 						var classes = '';
-						console.log( index );
 						if ( ! index || index % 2 === 0 ) {
 							classes += 'alternate';
 						}
