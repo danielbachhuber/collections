@@ -19,8 +19,8 @@
 	-webkit-box-shadow: 0 3px 6px rgba(0,0,0,.3);
 	box-shadow: 0 3px 6px rgba(0,0,0,.3);
 	width: 500px;
-	height: 400px;
-	margin-top: -200px;
+	height: 500px;
+	margin-top: -250px;
 	overflow: hidden;
 	margin-left: -250px;
 	position: fixed;
@@ -76,6 +76,36 @@
 	width: 36px;
 	height: 36px;
 	content: '\f158';
+}
+
+#collections-add-post-modal-wrap #collections-add-post-search-wrap {
+	text-align: center;
+	margin-top: 5px;
+}
+
+#collections-add-post-modal-wrap input#collections-add-post-search {
+	width: 90%;
+	padding: 5px;
+}
+
+#collections-add-post-modal-wrap ul#collections-add-post-search-results {
+	padding: 10px;
+}
+
+#collections-add-post-modal-wrap ul#collections-add-post-search-results li {
+	border-bottom: 1px solid #f1f1f1;
+	color: #333;
+	cursor: pointer;
+	margin-bottom: 0;
+}
+
+#collections-add-post-modal-wrap ul#collections-add-post-search-results li label {
+	display: block;
+	padding: 6px 6px;
+}
+
+#collections-add-post-modal-wrap ul#collections-add-post-search-results li input {
+	margin-right: 8px;
 }
 
 #collections-add-post-modal-wrap #collections-add-post-add-wrap {

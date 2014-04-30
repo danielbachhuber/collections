@@ -52,6 +52,7 @@ class Collections {
 	private function setup_actions() {
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'action_enqueue_scripts_register' ) );
+		add_action( 'wp_ajax_collections_add_post_search', array( $this, 'handle_ajax_add_post_search' ) );
 		add_action( 'widgets_init', array( $this, 'action_widgets_init' ) );
 
 	}
@@ -65,6 +66,39 @@ class Collections {
 		wp_register_style( 'collections', $this->get_url( 'css/collections.css' ) );
 
 		$this->did_register_assets = true;
+
+	}
+
+	/**
+	 * Handle a request to search for posts to add
+	 */
+	public function handle_ajax_add_post_search() {
+
+		// @todo allow collection by collection permissions
+		if ( ! current_user_can( 'edit_theme_options' )
+			|| ! wp_verify_nonce( $_GET['nonce'], 'collections-add-post-search' ) ) {
+			$this->send_json_error( __( "You probably shouldn't do this.", 'collections' ) );
+		}
+
+		$query_args = array(
+			'post_type'    => 'post',
+			'post_status'  => 'publish',
+			);
+		if ( ! empty( $_GET['s'] ) ) {
+			$query_args['s'] = sanitize_text_field( $_GET['s'] );
+		}
+
+		$query = new WP_Query( $query_args );
+		$posts = array();
+		foreach( $query->posts as $post ) {
+
+			$posts[] = array(
+				'ID'           => $post->ID,
+				'post_title'   => $post->post_title,
+				);
+		}
+
+		$this->send_json_success( '', array( 'posts' => $posts ) );
 
 	}
 
@@ -102,6 +136,29 @@ class Collections {
 
 		echo $this->get_view( 'add-post-modal' );
 
+	}
+
+	/**
+	 * Send a JSON success message
+	 *
+	 * @param string $message
+	 * @param mixed $data
+	 */
+	private function send_json_success( $message = '', $data = array() ) {
+		header( 'Content-Type: application/json' );
+		echo json_encode( array( 'status' => 'success', 'message' => $message, 'data' => $data ) );
+		exit;
+	}
+
+	/**
+	 * Send a JSON error message
+	 *
+	 * @param string $message
+	 */
+	private function send_json_error( $message = '' ) {
+		header( 'Content-Type: application/json' );
+		echo json_encode( array( 'status' => 'error', 'message' => $message ) );
+		exit;
 	}
 
 	/**

@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * A collection of WordPress posts.
+ */
 class Collection {
 
 	private $post;
