@@ -9,8 +9,8 @@
 
 	</ul>
 
-	<span id="collection-widget-instance-<?php echo $widget_instance_id; ?>"></span>
-
+	<?php if ( false === stripos( $widget_id, '__i__' ) ) : ?>
+		<span id="collection-widget-instance-<?php echo $widget_instance_id; ?>"></span>
 	<script>
 
 		jQuery('<?php echo "#collection-widget-instance-" . $widget_instance_id; ?>').ready(function($){
@@ -24,5 +24,6 @@
 		});
 
 	</script>
+	<?php endif; ?>
 
 </div>

@@ -98,6 +98,7 @@ class Collection_Widget extends WP_Widget {
 			'title'                       => ! empty( $instance['title'] ) ? $instance['title'] : '',
 			'collection_items_field_name' => $this->get_field_name( 'collection_items' ),
 			// See wp_list_widget_controls_dynamic_sidebar() for details on this mess
+			'widget_id'                   => $this->id,
 			'widget_instance_id'          => md5( rand( 0, 10000 ) . time() ),
 			);
 

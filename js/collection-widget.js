@@ -1,5 +1,10 @@
 (function( $ ){
 
+	$(document).on( 'widget-added', function( e, data ) {
+
+		collectionWidget.init( data );
+	});
+
 	collectionWidget = {
 
 		/**
