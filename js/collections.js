@@ -2,8 +2,6 @@
 
 	collectionAddPostModal = {
 
-		wrap: $( '#collections-add-post-modal-wrap' ),
-		backdrop: $( '#collections-add-post-modal-backdrop' ),
 		resultPosts: [],
 		selectedPosts: [],
 
@@ -13,6 +11,9 @@
 		init: function( context ) {
 
 			this.context = context;
+
+			this.wrap = $( '#collections-add-post-modal-wrap' );
+			this.backdrop = $( '#collections-add-post-modal-backdrop' );
 
 			return this;
 		},
