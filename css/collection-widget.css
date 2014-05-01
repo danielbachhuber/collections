@@ -9,6 +9,10 @@
 	border: 1px solid #e5e5e5;
 }
 
+.collection-widget li.collection-item:hover {
+	cursor: move;
+}
+
 .collection-widget li.collection-item h5 {
 	font-size: 14px;
 	margin-top: 5px;

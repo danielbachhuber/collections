@@ -1,11 +1,13 @@
 (function( $ ){
 
-	var collectionWidgets = {
+	collectionWidget = {
 
 		/**
 		 * Initialize the collectionWidget interface
 		 */
-		init: function() {
+		init: function( el ) {
+
+			this.el = el;
 
 			this.bindEvents();
 
@@ -13,23 +15,27 @@
 
 		bindEvents: function() {
 
-			$('body').on( 'click.collection-add-post', '.collection-widget a.add-post', $.proxy( function( e ) {
+			if ( this.el.hasClass( 'bound-events' ) ) {
+				return;
+			}
+
+			this.el.on( 'click.collection-add-post', '.collection-widget a.add-post', $.proxy( function( e ) {
 
 				e.preventDefault();
-
-				this.currentWidget = $( e.currentTarget ).closest( '.collection-widget' );
 
 				var modal = collectionAddPostModal.init( this );
 				modal.open();
 
 			}, this ) );
 
-			$('body').on( 'click.collection-remove-item', '.collection-widget a.collection-item-remove-action', $.proxy( function( e ) {
+			this.el.on( 'click.collection-remove-item', '.collection-widget a.collection-item-remove-action', $.proxy( function( e ) {
 
 				e.preventDefault();
 				$( e.currentTarget ).closest( 'li.collection-item' ).remove();
 
 			}, this ) );
+
+			this.el.addClass( 'bound-events' );
 
 		},
 
@@ -40,14 +46,18 @@
 				var data = {
 					post: post
 				};
-				this.currentWidget.find('.collection-items').prepend( template( data ) );
+				this.el.find('.collection-items').prepend( template( data ) );
+
+				var collection_name = this.el.find('.collection-items').data('collection-item-field-name');
+				this.el.find('.collection-item input').each( function( index, value ){
+					if ( ! $( value ).attr( 'name' ) ) {
+						$( value ).attr( 'name', collection_name );
+					}
+				});
 			}, this ) );
 
 		}
 
 	};
-
-	collectionWidgets.init();
-
 
 })( jQuery );

@@ -37,15 +37,22 @@ class Collection_Widget extends WP_Widget {
 		Collections()->enqueue_assets();
 
 		wp_enqueue_style( 'collection-widget', Collections()->get_url( 'css/collection-widget.css' ) );
-		wp_enqueue_script( 'collection-widget', Collections()->get_url( 'js/collection-widget.js' ), array( 'jquery' ) );
+		wp_enqueue_script( 'collection-widget', Collections()->get_url( 'js/collection-widget.js' ), array( 'jquery', 'collections' ) );
 
 		$vars = array(
 			'title_field_id'              => $this->get_field_id( 'title' ),
 			'title_field_name'            => $this->get_field_name( 'title' ),
 			'title'                       => ! empty( $instance['title'] ) ? $instance['title'] : '',
 			'collection_items_field_name' => $this->get_field_name( 'collection_items' ),
+			// See wp_list_widget_controls_dynamic_sidebar() for details on this mess
+			'widget_instance_id'          => md5( rand( 0, 10000 ) . time() ),
 			);
 		echo Collections()->get_view( 'widget-form', $vars );
+
+		// Only add the collection item script template once
+		if ( ! has_action( 'admin_footer', array( $this, 'action_admin_footer' ) ) ) {
+			add_action( 'admin_footer', array( $this, 'action_admin_footer' ) );
+		}
 
 	}
 
@@ -62,6 +69,13 @@ class Collection_Widget extends WP_Widget {
 		$instance['title'] = ! empty( $new_instance['title'] ) ? sanitize_text_field( $new_instance['title'] ) : '';
 
 		return $instance;
+	}
+
+	/**
+	 * Render script templates only once
+	 */
+	public function action_admin_footer() {
+		echo Collections()->get_view( 'widget-collection-item' );
 	}
 
 }
