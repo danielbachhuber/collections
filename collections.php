@@ -51,10 +51,43 @@ class Collections {
 	 */
 	private function setup_actions() {
 
+		add_action( 'init', array( $this, 'action_init_register_post_type' ) );
+
 		add_action( 'admin_enqueue_scripts', array( $this, 'action_enqueue_scripts_register' ) );
 		add_action( 'wp_ajax_collections_add_post_search', array( $this, 'handle_ajax_add_post_search' ) );
 		add_action( 'widgets_init', array( $this, 'action_widgets_init' ) );
 
+	}
+
+	/**
+	 * Register the post type used to store collections behind the scenes
+	 */
+	public function action_init_register_post_type() {
+			register_post_type( 'collection', array(
+				'hierarchical'      => false,
+				'public'            => false,
+				'show_in_nav_menus' => false,
+				'show_ui'           => false,
+				'supports'          => array(),
+				'has_archive'       => false,
+				'query_var'         => false,
+				'rewrite'           => false,
+				'labels'            => array(
+					'name'                => __( 'Collections', 'collections' ),
+					'singular_name'       => __( 'Collection', 'collections' ),
+					'all_items'           => __( 'Collections', 'collections' ),
+					'new_item'            => __( 'New Collection', 'collections' ),
+					'add_new'             => __( 'Add New', 'collections' ),
+					'add_new_item'        => __( 'Add New Collection', 'collections' ),
+					'edit_item'           => __( 'Edit Collection', 'collections' ),
+					'view_item'           => __( 'View Collection', 'collections' ),
+					'search_items'        => __( 'Search Collections', 'collections' ),
+					'not_found'           => __( 'No Collections found', 'collections' ),
+					'not_found_in_trash'  => __( 'No Collections found in trash', 'collections' ),
+					'parent_item_colon'   => __( 'Parent Collection', 'collections' ),
+					'menu_name'           => __( 'Collections', 'collections' ),
+				),
+			) );
 	}
 
 	/**

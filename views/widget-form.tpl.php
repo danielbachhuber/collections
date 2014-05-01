@@ -16,6 +16,12 @@
 		jQuery('<?php echo "#collection-widget-instance-" . $widget_instance_id; ?>').ready(function($){
 			var parent = $('<?php echo "#collection-widget-instance-" . $widget_instance_id; ?>').closest('.widget');
 			collectionWidget.init( parent );
+
+			<?php if ( ! empty( $collection_items ) ) : ?>
+				var collection_items = $.parseJSON( '<?php echo json_encode( $collection_items ); ?>' );
+				collectionWidget.selectPosts( collection_items );
+			<?php endif; ?>
+
 		});
 
 	</script>

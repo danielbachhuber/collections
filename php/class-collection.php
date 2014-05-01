@@ -7,6 +7,8 @@ class Collection {
 
 	private $post;
 
+	public static $post_type = 'collection';
+
 	public function __construct( $post ) {
 
 		if ( is_numeric( $post ) ) {
@@ -14,6 +16,49 @@ class Collection {
 		}
 
 		$this->post = $post;
+	}
+
+	/**
+	 * Get a collection by its name
+	 *
+	 * @param string $name
+	 * @return Collection|false
+	 */
+	public static function get_by_name( $name ) {
+		global $wpdb;
+
+		$post_id = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_name=%s AND post_type=%s", $name, self::$post_type ) );
+		if ( ! $post_id ) {
+			return false;
+		}
+
+		return new Collection( $post_id );
+	}
+
+	/**
+	 * Create a new collection
+	 *
+	 * @param string $name
+	 * @return Collection|WP_Error
+	 */
+	public static function create( $name ) {
+
+		if ( self::get_by_name( $name ) ) {
+			return new WP_Error( 'collection-create-error', __( 'Collection already exists by that name.', 'collections' ) );
+		}
+
+		$post_data = array(
+			'post_title'    => $name,
+			'post_name'     => $name,
+			'post_type'     => self::$post_type,
+			'post_status'   => 'publish',
+			);
+		$post_id = wp_insert_post( $post_data, true );
+		if ( is_wp_error( $post_id ) ) {
+			return $post_id;
+		}
+
+		return new Collection( $post_id );
 	}
 
 	/**

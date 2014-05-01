@@ -18,6 +18,15 @@ class Collection_Widget extends WP_Widget {
 	}
 
 	/**
+	 * Get this widget's corresponding collection name
+	 *
+	 * @return string
+	 */
+	public function get_collection_name() {
+		return sanitize_title( 'widget-' . $this->id );
+	}
+
+	/**
 	 * Output a collection of posts
 	 *
 	 * @param array $args
@@ -47,6 +56,14 @@ class Collection_Widget extends WP_Widget {
 			// See wp_list_widget_controls_dynamic_sidebar() for details on this mess
 			'widget_instance_id'          => md5( rand( 0, 10000 ) . time() ),
 			);
+
+		$vars[ 'collection_items' ] = array();
+		if ( $collection = Collection::get_by_name( $this->get_collection_name() ) ) {
+			foreach( $collection->get_published_item_ids() as $post_id ) {
+				$vars[ 'collection_items' ][ $post_id ] = Collections()->get_post_for_json( $post_id );
+			}
+		}
+
 		echo Collections()->get_view( 'widget-form', $vars );
 
 		// Only add the collection item script template once
@@ -65,8 +82,20 @@ class Collection_Widget extends WP_Widget {
 	 */
 	public function update( $new_instance, $old_instance ) {
 
+		$collection = Collection::get_by_name( $this->get_collection_name() );
+		if ( ! $collection ) {
+			$collection = Collection::create( $this->get_collection_name() );
+		}
+
 		$instance = array();
 		$instance['title'] = ! empty( $new_instance['title'] ) ? sanitize_text_field( $new_instance['title'] ) : '';
+		if ( ! is_wp_error( $collection ) ) {
+			if ( is_array( $new_instance['collection_items'] ) ) {
+				$collection->set_published_item_ids( array_map( 'absint', $new_instance['collection_items'] ) );
+			} else {
+				$collection->set_published_item_ids( array() );
+			}
+		}
 
 		return $instance;
 	}
