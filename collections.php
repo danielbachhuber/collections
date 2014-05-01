@@ -124,7 +124,7 @@ class Collections {
 		$query = new WP_Query( $query_args );
 		$posts = array();
 		foreach( $query->posts as $post ) {
-			$posts[ $post->ID ] = $this->get_post_for_json( $post );
+			$posts[] = $this->get_post_for_json( $post );
 		}
 
 		$this->send_json_success( '', array( 'posts' => $posts ) );

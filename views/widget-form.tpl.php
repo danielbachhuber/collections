@@ -18,8 +18,7 @@
 			collectionWidget.init( parent );
 
 			<?php if ( ! empty( $collection_items ) ) : ?>
-				var collection_items = $.parseJSON( '<?php echo json_encode( $collection_items ); ?>' );
-				collectionWidget.selectPosts( collection_items );
+				collectionWidget.selectPosts( $.parseJSON( '<?php echo json_encode( $collection_items ); ?>' ) );
 			<?php endif; ?>
 
 		});

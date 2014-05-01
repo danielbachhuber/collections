@@ -15,10 +15,14 @@
 
 		bindEvents: function() {
 
+			// Make the collection sortable each time
+			$( 'ul.collection-items', this.el ).sortable();
+
 			if ( this.el.hasClass( 'bound-events' ) ) {
 				return;
 			}
 
+			// Instantiates the modal to add a new post to the collection
 			this.el.on( 'click.collection-add-post', '.collection-widget a.add-post', $.proxy( function( e ) {
 
 				e.preventDefault();
@@ -28,6 +32,7 @@
 
 			}, this ) );
 
+			// Removes an item from the collection
 			this.el.on( 'click.collection-remove-item', '.collection-widget a.collection-item-remove-action', $.proxy( function( e ) {
 
 				e.preventDefault();
@@ -40,6 +45,9 @@
 		},
 
 		selectPosts: function( posts ) {
+
+			// Reverse order to apply in proper direction
+			posts.reverse();
 
 			var template = wp.template( 'collection-item' );
 			$.each( posts, $.proxy( function( index, post ) {

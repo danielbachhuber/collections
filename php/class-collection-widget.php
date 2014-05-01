@@ -46,7 +46,7 @@ class Collection_Widget extends WP_Widget {
 		Collections()->enqueue_assets();
 
 		wp_enqueue_style( 'collection-widget', Collections()->get_url( 'css/collection-widget.css' ) );
-		wp_enqueue_script( 'collection-widget', Collections()->get_url( 'js/collection-widget.js' ), array( 'jquery', 'collections' ) );
+		wp_enqueue_script( 'collection-widget', Collections()->get_url( 'js/collection-widget.js' ), array( 'jquery', 'jquery-ui-sortable', 'collections' ) );
 
 		$vars = array(
 			'title_field_id'              => $this->get_field_id( 'title' ),
@@ -60,7 +60,7 @@ class Collection_Widget extends WP_Widget {
 		$vars[ 'collection_items' ] = array();
 		if ( $collection = Collection::get_by_name( $this->get_collection_name() ) ) {
 			foreach( $collection->get_published_item_ids() as $post_id ) {
-				$vars[ 'collection_items' ][ $post_id ] = Collections()->get_post_for_json( $post_id );
+				$vars[ 'collection_items' ][] = Collections()->get_post_for_json( $post_id );
 			}
 		}
 

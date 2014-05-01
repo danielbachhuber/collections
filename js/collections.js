@@ -4,8 +4,8 @@
 
 		wrap: $( '#collections-add-post-modal-wrap' ),
 		backdrop: $( '#collections-add-post-modal-backdrop' ),
-		resultPosts: {},
-		selectedPosts: {},
+		resultPosts: [],
+		selectedPosts: [],
 
 		/**
 		 * Initialize the collectionAddPostModal
@@ -62,7 +62,8 @@
 
 				$( 'form input[name="collections-add-post[]"]:checked', this.wrap ).each( $.proxy( function( index, value ){
 					var post_id = $( value ).val();
-					this.selectedPosts[ post_id ] = this.resultPosts[ post_id ];
+					var post = $.grep( this.resultPosts, function( e ){ return e.ID == post_id; } );
+					this.selectedPosts.push( post[0] );
 				}, this ) );
 
 				if ( typeof this.context.selectPosts == 'function' ) {
@@ -135,7 +136,7 @@
 					var searchResults = $('#collections-add-post-search-results', this.wrap );
 					searchResults.empty();
 					this.resultPosts = response.data.posts;
-					this.selectedPosts = {};
+					this.selectedPosts = [];
 
 					var resultTemplate = wp.template( 'collections-add-post-search-result' );
 					var i = 0;
