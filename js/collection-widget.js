@@ -24,6 +24,13 @@
 
 			}, this ) );
 
+			$('body').on( 'click.collection-remove-item', '.collection-widget a.collection-item-remove-action', $.proxy( function( e ) {
+
+				e.preventDefault();
+				$( e.currentTarget ).closest( 'li.collection-item' ).remove();
+
+			}, this ) );
+
 		},
 
 		selectPosts: function( posts ) {
