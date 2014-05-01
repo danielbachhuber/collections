@@ -42,6 +42,7 @@ class Collection_Widget extends WP_Widget {
 	 * @param array $instance
 	 */
 	public function form( $instance ) {
+		global $wp_customize;
 
 		Collections()->enqueue_assets();
 
@@ -69,6 +70,10 @@ class Collection_Widget extends WP_Widget {
 		// Only add the collection item script template once
 		if ( ! has_action( 'admin_footer', array( $this, 'render_widget_collection_item' ) ) ) {
 			add_action( 'admin_footer', array( $this, 'render_widget_collection_item' ) );
+		}
+
+		if ( ! empty( $wp_customize ) && ! has_action( 'customize_controls_print_footer_scripts', array( $this, 'render_widget_collection_item' )) ) {
+			add_action( 'customize_controls_print_footer_scripts', array( $this, 'render_widget_collection_item' ) );
 		}
 
 	}

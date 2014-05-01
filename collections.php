@@ -144,6 +144,7 @@ class Collections {
 	 * Enqueue all of the necessary assets for the plugin
 	 */
 	public function enqueue_assets() {
+		global $wp_customize;
 
 		if ( ! $this->did_register_assets ) {
 			$this->action_enqueue_scripts_register();
@@ -152,8 +153,12 @@ class Collections {
 		wp_enqueue_script( 'collections' );
 		wp_enqueue_style( 'collections' );
 
-		if ( is_admin() ) {
+		if ( is_admin() && ! has_action( 'admin_footer', array( $this, 'render_add_post_modal' ) ) ) {
 			add_action( 'admin_footer', array( $this, 'render_add_post_modal' ) );
+		}
+
+		if ( ! empty( $wp_customize ) && ! has_action( 'customize_controls_print_footer_scripts', array( $this, 'render_add_post_modal' )) ) {
+			add_action( 'customize_controls_print_footer_scripts', array( $this, 'render_add_post_modal' ) );
 		}
 
 	}
