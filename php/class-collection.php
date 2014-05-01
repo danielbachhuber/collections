@@ -95,6 +95,30 @@ class Collection {
 	}
 
 	/**
+	 * Get the IDs of posts for the staged version of this collection.
+	 *
+	 * @return array
+	 */
+	public function get_staged_item_ids() {
+
+		if ( $item_ids = $this->get_meta( 'staged_item_ids' ) ) {
+			return $item_ids;
+		} else {
+			return array();
+		}
+
+	}
+
+	/**
+	 * Set thes IDs of posts for the staged version of this collection.
+	 *
+	 * @param array
+	 */
+	public function set_staged_item_ids( $item_ids ) {
+		$this->set_meta( 'staged_item_ids', $item_ids );
+	}
+
+	/**
 	 * Get a meta value for this collection
 	 *
 	 * @param string $key

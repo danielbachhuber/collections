@@ -15,6 +15,8 @@ class Collection_Widget extends WP_Widget {
 			)
 		);
 
+		add_action( 'customize_controls_init', array( $this, 'action_customize_controls_init' ) );
+
 	}
 
 	/**
@@ -24,6 +26,34 @@ class Collection_Widget extends WP_Widget {
 	 */
 	public function get_collection_name() {
 		return sanitize_title( 'widget-' . $this->id );
+	}
+
+	/**
+	 * Determine if we're in the Customizer; if true, then the object cache gets
+	 * suspended and widgets should check this to decide whether they should
+	 * store anything persistently to the object cache, to transients, or
+	 * anywhere else.
+	 *
+	 * Adds support for pre-WordPress 3.9
+	 *
+	 * @return bool True if Customizer is on, false if not.
+	 */
+	public function is_preview() {
+		global $wp_customize;
+		return ( isset( $wp_customize ) && $wp_customize->is_preview() ) ;
+	}
+
+	/**
+	 * When the Customizer is loaded, we need to reset the staged from the currently published
+	 */
+	public function action_customize_controls_init() {
+
+		if ( $collection = Collection::get_by_name( $this->get_collection_name() ) ) {
+			if ( $collection->get_staged_item_ids() != $collection->get_published_item_ids() ) {
+				$collection->set_staged_item_ids( $collection->get_published_item_ids() );
+			}
+		}
+
 	}
 
 	/**
@@ -73,7 +103,13 @@ class Collection_Widget extends WP_Widget {
 
 		$vars[ 'collection_items' ] = array();
 		if ( $collection = Collection::get_by_name( $this->get_collection_name() ) ) {
-			foreach( $collection->get_published_item_ids() as $post_id ) {
+			if ( $this->is_preview() ) {
+				$collection_items = $collection->get_staged_item_ids();
+			} else {
+				$collection_items = $collection->get_published_item_ids();
+			}
+
+			foreach( $collection_items as $post_id ) {
 				$vars[ 'collection_items' ][] = Collections()->get_post_for_json( $post_id );
 			}
 		}
@@ -103,16 +139,23 @@ class Collection_Widget extends WP_Widget {
 		$collection = Collection::get_by_name( $this->get_collection_name() );
 		if ( ! $collection ) {
 			$collection = Collection::create( $this->get_collection_name() );
+			if ( is_wp_error( $collection ) ) {
+				return $old_instance;
+			}
 		}
 
 		$instance = array();
 		$instance['title'] = ! empty( $new_instance['title'] ) ? sanitize_text_field( $new_instance['title'] ) : '';
-		if ( ! is_wp_error( $collection ) ) {
-			if ( is_array( $new_instance['collection_items'] ) ) {
-				$collection->set_published_item_ids( array_map( 'absint', $new_instance['collection_items'] ) );
-			} else {
-				$collection->set_published_item_ids( array() );
-			}
+		if ( ! empty( $new_instance['collection_items'] ) && is_array( $new_instance['collection_items'] ) ) {
+			$instance_items = array_map( 'absint', $new_instance['collection_items'] );
+		} else {
+			$instance_items = array();
+		}
+
+		if ( $this->is_preview() ) {
+			$collection->set_staged_item_ids( $instance_items );
+		} else {
+			$collection->set_published_item_ids( $instance_items );
 		}
 
 		return $instance;

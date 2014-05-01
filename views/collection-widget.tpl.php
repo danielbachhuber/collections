@@ -2,13 +2,18 @@
 
 	$title = ( ! empty( $instance['title'] ) ) ? $instance['title'] : '';
 
+	// WP_Query doesn't properly handle an empty state: https://core.trac.wordpress.org/ticket/28099
+	if ( empty( $collection_item_ids ) ) {
+		return;
+	}
+
 	$query = new WP_Query( array(
 		'post__in'            => $collection_item_ids,
 		'orderby'             => 'post__in',
 		'no_found_rows'       => true,
 	) );
 
-	if ( $query->have_posts()) :
+	if ( $query->have_posts() ) :
 ?>
 		<?php echo $args['before_widget']; ?>
 		<?php if ( $title ) {
