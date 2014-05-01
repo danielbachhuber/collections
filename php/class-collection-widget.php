@@ -34,6 +34,19 @@ class Collection_Widget extends WP_Widget {
 	 */
 	public function widget( $args, $instance ) {
 
+		if ( $collection = Collection::get_by_name( $this->get_collection_name() ) ) {
+			$collection_item_ids = $collection->get_published_item_ids();
+		} else {
+			$collection_item_ids = array();
+		}
+
+		$vars = array(
+			'args'                => $args,
+			'instance'            => $instance,
+			'collection_item_ids' => $collection_item_ids,
+			);
+		echo Collections()->get_view( 'collection-widget', $vars );
+
 	}
 
 	/**
