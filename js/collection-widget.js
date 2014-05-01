@@ -1,4 +1,4 @@
-(function( $ ){
+(function( $, wp ){
 
 	$(document).on( 'widget-added', function( e, data ) {
 
@@ -18,10 +18,19 @@
 
 		},
 
+		/**
+		 * Bind events that this object should pay attention to
+		 */
 		bindEvents: function() {
 
 			// Make the collection sortable each time
-			$( 'ul.collection-items', this.el ).sortable();
+			$( 'ul.collection-items', this.el ).sortable({
+					stop: $.proxy( function( event, ui ) {
+
+						this.triggerDirtyWidget();
+
+					}, this )
+				});
 
 			if ( this.el.hasClass( 'bound-events' ) ) {
 				return;
@@ -49,6 +58,22 @@
 
 		},
 
+		triggerDirtyWidget: function() {
+
+			if ( typeof wp.customize.Widgets == 'undefined' ) {
+				return;
+			}
+
+			if ( typeof this.control == 'undefined' ) {
+				var parent = this.el.closest('li');
+				var control_id = parent.attr('id').replace(/customize-control-widget_/, '');
+				this.control = wp.customize.Widgets.getWidgetFormControlForWidget( control_id );
+			}
+
+			var settings = this.control.setting();
+			settings.collection_items = [];
+		},
+
 		selectPosts: function( posts ) {
 
 			// Reverse order to apply in proper direction
@@ -73,4 +98,4 @@
 
 	};
 
-})( jQuery );
+})( jQuery, wp );
