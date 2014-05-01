@@ -27,7 +27,7 @@
 			$( 'ul.collection-items', this.el ).sortable({
 					stop: $.proxy( function( event, ui ) {
 
-						this.triggerDirtyWidget();
+						this.updateCollectionItemsList();
 
 					}, this )
 				});
@@ -51,6 +51,7 @@
 
 				e.preventDefault();
 				$( e.currentTarget ).closest( 'li.collection-item' ).remove();
+				this.updateCollectionItemsList();
 
 			}, this ) );
 
@@ -58,20 +59,15 @@
 
 		},
 
-		triggerDirtyWidget: function() {
+		updateCollectionItemsList: function() {
 
-			if ( typeof wp.customize.Widgets == 'undefined' ) {
-				return;
-			}
+			var item_ids = [];
+			$( 'li.collection-item', this.el ).each( function( e ){
+				item_ids.push( $( this ).data( 'post-id' ) );
+			});
 
-			if ( typeof this.control == 'undefined' ) {
-				var parent = this.el.closest('li');
-				var control_id = parent.attr('id').replace(/customize-control-widget_/, '');
-				this.control = wp.customize.Widgets.getWidgetFormControlForWidget( control_id );
-			}
-
-			var settings = this.control.setting();
-			settings.collection_items = [];
+			$( 'input.collection-widget-item-ids', this.el ).val( item_ids.join( ',' ) );
+			$( 'input.collection-widget-item-ids', this.el ).trigger( 'change' );
 		},
 
 		selectPosts: function( posts ) {
@@ -86,12 +82,8 @@
 				};
 				this.el.find('.collection-items').prepend( template( data ) );
 
-				var collection_name = this.el.find('.collection-items').data('collection-item-field-name');
-				this.el.find('.collection-item input').each( function( index, value ){
-					if ( ! $( value ).attr( 'name' ) ) {
-						$( value ).attr( 'name', collection_name );
-					}
-				});
+				this.updateCollectionItemsList();
+
 			}, this ) );
 
 		}

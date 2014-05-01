@@ -96,6 +96,7 @@ class Collection_Widget extends WP_Widget {
 			'title_field_id'              => $this->get_field_id( 'title' ),
 			'title_field_name'            => $this->get_field_name( 'title' ),
 			'title'                       => ! empty( $instance['title'] ) ? $instance['title'] : '',
+			'collection_items_field_id'   => $this->get_field_id( 'collection_items' ),
 			'collection_items_field_name' => $this->get_field_name( 'collection_items' ),
 			// See wp_list_widget_controls_dynamic_sidebar() for details on this mess
 			'widget_id'                   => $this->id,
@@ -105,12 +106,12 @@ class Collection_Widget extends WP_Widget {
 		$vars[ 'collection_items' ] = array();
 		if ( $collection = Collection::get_by_name( $this->get_collection_name() ) ) {
 			if ( $this->is_preview() ) {
-				$collection_items = $collection->get_staged_item_ids();
+				$vars['collection_item_ids'] = $collection->get_staged_item_ids();
 			} else {
-				$collection_items = $collection->get_published_item_ids();
+				$vars['collection_item_ids'] = $collection->get_published_item_ids();
 			}
 
-			foreach( $collection_items as $post_id ) {
+			foreach( $vars['collection_item_ids'] as $post_id ) {
 				$vars[ 'collection_items' ][] = Collections()->get_post_for_json( $post_id );
 			}
 		}
@@ -147,11 +148,14 @@ class Collection_Widget extends WP_Widget {
 
 		$instance = array();
 		$instance['title'] = ! empty( $new_instance['title'] ) ? sanitize_text_field( $new_instance['title'] ) : '';
-		if ( ! empty( $new_instance['collection_items'] ) && is_array( $new_instance['collection_items'] ) ) {
-			$instance_items = array_map( 'absint', $new_instance['collection_items'] );
+		if ( ! empty( $new_instance['collection_items'] ) ) {
+			$instance_items = array_map( 'absint', explode( ',', $new_instance['collection_items'] ) );
 		} else {
 			$instance_items = array();
 		}
+
+		// Might need to trigger a cache bust
+		$instance['collection_items_hash'] = md5( serialize( $instance_items ) );
 
 		if ( $this->is_preview() ) {
 			$collection->set_staged_item_ids( $instance_items );
