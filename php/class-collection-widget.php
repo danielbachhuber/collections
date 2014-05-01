@@ -50,8 +50,8 @@ class Collection_Widget extends WP_Widget {
 		echo Collections()->get_view( 'widget-form', $vars );
 
 		// Only add the collection item script template once
-		if ( ! has_action( 'admin_footer', array( $this, 'action_admin_footer' ) ) ) {
-			add_action( 'admin_footer', array( $this, 'action_admin_footer' ) );
+		if ( ! has_action( 'admin_footer', array( $this, 'render_widget_collection_item' ) ) ) {
+			add_action( 'admin_footer', array( $this, 'render_widget_collection_item' ) );
 		}
 
 	}
@@ -74,7 +74,7 @@ class Collection_Widget extends WP_Widget {
 	/**
 	 * Render script templates only once
 	 */
-	public function action_admin_footer() {
+	public function render_widget_collection_item() {
 		echo Collections()->get_view( 'widget-collection-item' );
 	}
 
