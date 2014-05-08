@@ -103,7 +103,7 @@ class Collection_Widget extends WP_Widget {
 			'widget_instance_id'          => md5( rand( 0, 10000 ) . time() ),
 			);
 
-		$vars[ 'collection_items' ] = array();
+		$vars[ 'collection_items' ] = $vars[ 'collection_item_ids' ] = array();
 		if ( $collection = Collection::get_by_name( $this->get_collection_name() ) ) {
 			if ( $this->is_preview() ) {
 				$vars['collection_item_ids'] = $collection->get_staged_item_ids();
