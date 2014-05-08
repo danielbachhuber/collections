@@ -82,9 +82,9 @@
 				};
 				this.el.find('.collection-items').prepend( template( data ) );
 
-				this.updateCollectionItemsList();
-
 			}, this ) );
+
+			this.updateCollectionItemsList();
 
 		}
 
