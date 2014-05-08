@@ -15,8 +15,6 @@ class Collection_Widget extends WP_Widget {
 			)
 		);
 
-		add_action( 'customize_controls_init', array( $this, 'action_customize_controls_init' ) );
-
 	}
 
 	/**
@@ -38,22 +36,9 @@ class Collection_Widget extends WP_Widget {
 	 *
 	 * @return bool True if Customizer is on, false if not.
 	 */
-	public function is_preview() {
+	public function is_customizer() {
 		global $wp_customize;
 		return ( isset( $wp_customize ) && $wp_customize->is_preview() ) ;
-	}
-
-	/**
-	 * When the Customizer is loaded, we need to reset the staged from the currently published
-	 */
-	public function action_customize_controls_init() {
-
-		if ( $collection = Collection::get_by_name( $this->get_collection_name() ) ) {
-			if ( $collection->get_staged_item_ids() != $collection->get_published_item_ids() ) {
-				$collection->set_staged_item_ids( $collection->get_published_item_ids() );
-			}
-		}
-
 	}
 
 	/**
@@ -65,7 +50,11 @@ class Collection_Widget extends WP_Widget {
 	public function widget( $args, $instance ) {
 
 		if ( $collection = Collection::get_by_name( $this->get_collection_name() ) ) {
-			$collection_item_ids = $collection->get_published_item_ids();
+			if ( $this->is_customizer() ) {
+				$collection_item_ids = $collection->get_staged_item_ids();
+			} else {
+				$collection_item_ids = $collection->get_published_item_ids();
+			}
 		} else {
 			$collection_item_ids = array();
 		}
@@ -104,11 +93,14 @@ class Collection_Widget extends WP_Widget {
 			);
 
 		$vars[ 'collection_items' ] = $vars[ 'collection_item_ids' ] = array();
+
 		if ( $collection = Collection::get_by_name( $this->get_collection_name() ) ) {
-			if ( $this->is_preview() ) {
-				$vars['collection_item_ids'] = $collection->get_staged_item_ids();
-			} else {
-				$vars['collection_item_ids'] = $collection->get_published_item_ids();
+
+			$vars['collection_item_ids'] = $collection->get_published_item_ids();
+
+			// Reset the Customizer if needed, but only on initial page load
+			if ( $this->is_customizer() && empty( $_POST['wp_customize'] ) ) {
+				$collection->set_staged_item_ids( $vars['collection_item_ids'] );
 			}
 
 			foreach( $vars['collection_item_ids'] as $post_id ) {
@@ -154,10 +146,11 @@ class Collection_Widget extends WP_Widget {
 			$instance_items = array();
 		}
 
-		// Might need to trigger a cache bust
+		// Might need to trigger a cache bust in the customizer
 		$instance['collection_items_hash'] = md5( serialize( $instance_items ) );
 
-		if ( $this->is_preview() ) {
+		// Doing a customizer preview should only stage collection items.
+		if ( isset( $_POST['wp_customize'], $_POST['action'] ) && 'on' === $_POST['wp_customize'] && 'update-widget' === $_POST['action'] ) {
 			$collection->set_staged_item_ids( $instance_items );
 		} else {
 			$collection->set_published_item_ids( $instance_items );
