@@ -164,7 +164,7 @@ class Collection_Widget extends WP_Widget {
 		$instance['collection_items_hash'] = md5( serialize( $instance_items ) );
 
 		// Doing a customizer preview should only stage collection items.
-		if ( isset( $_POST['wp_customize'], $_POST['action'] ) && 'on' === $_POST['wp_customize'] && 'update-widget' === $_POST['action'] ) {
+		if ( $this->is_customizer_widget_update() ) {
 			$collection->set_staged_item_ids( $instance_items );
 		} else {
 			$collection->set_published_item_ids( $instance_items );
