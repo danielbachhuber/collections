@@ -42,6 +42,15 @@ class Collection_Widget extends WP_Widget {
 	}
 
 	/**
+	 * Whether or not the Customizer is performing a widget preview update on us
+	 *
+	 * @return bool
+	 */
+	public function is_customizer_widget_update() {
+		return ( isset( $_POST['wp_customize'], $_POST['action'] ) && 'on' === $_POST['wp_customize'] && 'update-widget' === $_POST['action'] );
+	}
+
+	/**
 	 * Output a collection of posts
 	 *
 	 * @param array $args
@@ -96,7 +105,12 @@ class Collection_Widget extends WP_Widget {
 
 		if ( $collection = Collection::get_by_name( $this->get_collection_name() ) ) {
 
-			$vars['collection_item_ids'] = $collection->get_published_item_ids();
+			// Show staged items in the form when doing an update
+			if ( $this->is_customizer_widget_update() ) {
+				$vars['collection_item_ids'] = $collection->get_staged_item_ids();
+			} else {
+				$vars['collection_item_ids'] = $collection->get_published_item_ids();
+			}
 
 			// Reset the Customizer if needed, but only on initial page load
 			if ( $this->is_customizer() && empty( $_POST['wp_customize'] ) ) {
