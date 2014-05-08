@@ -25,12 +25,13 @@
 
 			// Make the collection sortable each time
 			$( 'ul.collection-items', this.el ).sortable({
-					stop: $.proxy( function( event, ui ) {
+				axis: 'y',
+				stop: $.proxy( function( event, ui ) {
 
-						this.updateCollectionItemsList();
+					this.updateCollectionItemsList();
 
-					}, this )
-				});
+				}, this )
+			});
 
 			if ( this.el.hasClass( 'bound-events' ) ) {
 				return;
