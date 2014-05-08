@@ -1,4 +1,4 @@
-(function( $ ){
+(function( $, wp ){
 
 	$(document).on( 'widget-added', function( e, data ) {
 
@@ -18,10 +18,19 @@
 
 		},
 
+		/**
+		 * Bind events that this object should pay attention to
+		 */
 		bindEvents: function() {
 
 			// Make the collection sortable each time
-			$( 'ul.collection-items', this.el ).sortable();
+			$( 'ul.collection-items', this.el ).sortable({
+					stop: $.proxy( function( event, ui ) {
+
+						this.updateCollectionItemsList();
+
+					}, this )
+				});
 
 			if ( this.el.hasClass( 'bound-events' ) ) {
 				return;
@@ -42,11 +51,23 @@
 
 				e.preventDefault();
 				$( e.currentTarget ).closest( 'li.collection-item' ).remove();
+				this.updateCollectionItemsList();
 
 			}, this ) );
 
 			this.el.addClass( 'bound-events' );
 
+		},
+
+		updateCollectionItemsList: function() {
+
+			var item_ids = [];
+			$( 'li.collection-item', this.el ).each( function( e ){
+				item_ids.push( $( this ).data( 'post-id' ) );
+			});
+
+			$( 'input.collection-widget-item-ids', this.el ).val( item_ids.join( ',' ) );
+			$( 'input.collection-widget-item-ids', this.el ).trigger( 'change' );
 		},
 
 		selectPosts: function( posts ) {
@@ -61,16 +82,12 @@
 				};
 				this.el.find('.collection-items').prepend( template( data ) );
 
-				var collection_name = this.el.find('.collection-items').data('collection-item-field-name');
-				this.el.find('.collection-item input').each( function( index, value ){
-					if ( ! $( value ).attr( 'name' ) ) {
-						$( value ).attr( 'name', collection_name );
-					}
-				});
 			}, this ) );
+
+			this.updateCollectionItemsList();
 
 		}
 
 	};
 
-})( jQuery );
+})( jQuery, wp );

@@ -5,7 +5,9 @@
 
 	<p><a href="#" class="add-post button"><?php _e( 'Add Posts', 'collections' ); ?></a></p>
 
-	<ul class="collection-items" data-collection-item-field-name="<?php echo esc_attr( $collection_items_field_name ); ?>[]">
+	<input type="hidden" id="<?php echo esc_attr( $collection_items_field_id ); ?>" name="<?php echo esc_attr( $collection_items_field_name ); ?>" class="collection-widget-item-ids" value="<?php echo esc_attr( implode( ',', $collection_item_ids ) ); ?>" />
+
+	<ul class="collection-items">
 
 	</ul>
 
