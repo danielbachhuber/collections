@@ -17,6 +17,14 @@ function collections_get_posts( $name, $args = array() ) {
 	}
 
 	if ( Collections()->is_customizer_preview() ) {
+
+		// Reset collections on initial page load
+		if ( ! empty( $_POST['customize_messenger_channel'] )
+			&& 'preview-0' === $_POST['customize_messenger_channel']
+			&& $collection->get_published_item_ids() != $collection->get_customizer_item_ids() ) {
+			$collection->set_customizer_item_ids( $collection->get_published_item_ids() );
+		}
+
 		return $collection->get_customizer_items();
 	} else {
 		return $collection->get_published_items();
@@ -40,6 +48,14 @@ function collections_get_post_ids( $name, $args = array() ) {
 	}
 
 	if ( Collections()->is_customizer_preview() ) {
+
+		// Reset collections on initial page load
+		if ( ! empty( $_POST['customize_messenger_channel'] )
+			&& 'preview-0' === $_POST['customize_messenger_channel']
+			&& $collection->get_published_item_ids() != $collection->get_customizer_item_ids() ) {
+			$collection->set_customizer_item_ids( $collection->get_published_item_ids() );
+		}
+
 		return $collection->get_customizer_item_ids();
 	} else {
 		return $collection->get_published_item_ids();

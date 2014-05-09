@@ -189,18 +189,7 @@ class Collection_Customizer {
 			return;
 		}
 
-		$collection = Post_Collection::get_by_name( $name );
-		$data = array(
-			'slug'         => sanitize_title( $name ),
-			'items'        => array(),
-			);
-		if ( $collection ) {
-			foreach( $collection->get_customizer_items() as $post ) {
-				$data['items'][] = Collections()->get_post_for_json( $post );
-			}
-		}
-
-		$this->rendered_collections[ $name ] = $data;
+		$this->rendered_collections[] = $name;
 
 	}
 
@@ -219,8 +208,24 @@ class Collection_Customizer {
 	 */
 	public function action_wp_footer() {
 
+		// Set up the data
+		$rendered_collections = array();
+		foreach( $this->rendered_collections as $name ) {
+			$collection = Post_Collection::get_by_name( $name );
+			$data = array(
+				'slug'         => sanitize_title( $name ),
+				'items'        => array(),
+				);
+			if ( $collection ) {
+				foreach( $collection->get_customizer_items() as $post ) {
+					$data['items'][] = Collections()->get_post_for_json( $post );
+				}
+			}
+			$rendered_collections[ $name ] = $data;
+		}
+
 		$settings = array(
-			'renderedCollections'   => $this->rendered_collections,
+			'renderedCollections'   => $rendered_collections,
 		);
 
 		?>
