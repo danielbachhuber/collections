@@ -91,6 +91,7 @@ class Collection_Customizer {
 	public function action_customize_controls_enqueue_scripts() {
 
 		wp_enqueue_script( 'collection-customizer', Collections()->get_url( 'js/collection-customizer.js' ), array( 'jquery', 'customize-controls' ) );
+		wp_enqueue_style( 'collection-customizer', Collections()->get_url( 'css/collection-customizer.css' ) );
 
 	}
 
