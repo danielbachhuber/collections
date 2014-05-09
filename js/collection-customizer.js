@@ -51,12 +51,30 @@
 		 */
 		renderCollectionControl: function( name, items ) {
 
+			// Set up DOM
 			var clone = this.prototypeControl.clone();
-			var collectionControlHTML = clone.wrap('<div>').parent().html().replace(/__prototype__/, name );
-			var collectionControl = $( collectionControlHTML );
-			collectionControl.find( 'h3' ).append( name );
+			var collectionControlHTML = clone.wrap('<div>').parent().html().replace(/__prototype__/g, name );
+			collectionControlHTML = $( collectionControlHTML );
+			var id = collectionControlHTML.attr( 'id' );
+			collectionControlHTML.find( 'h3' ).append( name );
+			this.prototypeControl.after( collectionControlHTML );
+			var control = $.extend( {}, collectionControl );
+			control.init( collectionControlHTML );
 
-			this.prototypeControl.after( collectionControl );
+			// Set up Customizer
+			var settingId = 'collection_setting_' + name;
+			var controlType = 'text';
+			api.control.add( settingId, new api.Control( settingId, {
+				params: {
+					settings: {
+						'default': settingId
+					},
+					type: controlType,
+					is_new: false
+				},
+				previewer: this.previewer
+			} ) );
+
 
 		}
 
