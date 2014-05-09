@@ -1,9 +1,9 @@
 <?php
 
 /**
- * A collection of WordPress posts.
+ * A collection of WordPress items.
  */
-class Collection {
+abstract class Collection {
 
 	private $post;
 
@@ -32,7 +32,8 @@ class Collection {
 			return false;
 		}
 
-		return new Collection( $post_id );
+		$class = get_called_class();
+		return new $class( $post_id );
 	}
 
 	/**
@@ -58,7 +59,8 @@ class Collection {
 			return $post_id;
 		}
 
-		return new Collection( $post_id );
+		$class = get_called_class();
+		return new $class( $post_id );
 	}
 
 	/**
@@ -71,7 +73,14 @@ class Collection {
 	}
 
 	/**
-	 * Get the IDs of posts for the published version of this collection.
+	 * Get the items for the published version of this collection.
+	 *
+	 * @return array
+	 */
+	abstract public function get_published_items();
+
+	/**
+	 * Get the IDs of items for the published version of this collection.
 	 *
 	 * @return array
 	 */
@@ -86,7 +95,7 @@ class Collection {
 	}
 
 	/**
-	 * Set thes IDs of posts for the published version of this collection.
+	 * Set thes IDs of items for the published version of this collection.
 	 *
 	 * @param array
 	 */
@@ -95,7 +104,14 @@ class Collection {
 	}
 
 	/**
-	 * Get the IDs of posts for the staged version of this collection.
+	 * Get the items for the staged version of this collection.
+	 *
+	 * @return array
+	 */
+	abstract public function get_staged_items();
+
+	/**
+	 * Get the IDs of items for the staged version of this collection.
 	 *
 	 * @return array
 	 */
@@ -110,7 +126,7 @@ class Collection {
 	}
 
 	/**
-	 * Set thes IDs of posts for the staged version of this collection.
+	 * Set thes IDs of items for the staged version of this collection.
 	 *
 	 * @param array
 	 */

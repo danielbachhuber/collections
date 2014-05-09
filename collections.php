@@ -42,7 +42,9 @@ class Collections {
 	private function require_files() {
 
 		require_once dirname( __FILE__ ) . '/php/class-collection.php';
-		require_once dirname( __FILE__ ) . '/php/class-collection-widget.php';
+		require_once dirname( __FILE__ ) . '/php/class-post-collection.php';
+		require_once dirname( __FILE__ ) . '/php/class-post-collection-widget.php';
+		require_once dirname( __FILE__ ) . '/php/class-collection-customizer.php';
 
 	}
 
@@ -136,7 +138,7 @@ class Collections {
 	 */
 	public function action_widgets_init() {
 
-		register_widget( 'Collection_Widget' );
+		register_widget( 'Post_Collection_Widget' );
 
 	}
 

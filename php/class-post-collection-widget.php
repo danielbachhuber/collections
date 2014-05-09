@@ -3,19 +3,19 @@
 /**
  * Assign a list of posts to a widget slot in a sidebar
  */
-class Collection_Widget extends WP_Widget {
+class Post_Collection_Widget extends WP_Widget {
 
 	public function __construct() {
 
 		parent::__construct(
-			'collection_widget',
-			__( 'Collection', 'collections' ),
+			'post_collection_widget',
+			__( 'Post Collection', 'collections' ),
 			array(
 				'description' => __( 'A collection of posts.', 'collections' ),
 			)
 		);
 
-		add_action( 'customize_save_widget_collection_widget', array( $this, 'action_customize_save' ) );
+		add_action( 'customize_save_widget_post_collection_widget', array( $this, 'action_customize_save' ) );
 	}
 
 	/**
@@ -59,7 +59,7 @@ class Collection_Widget extends WP_Widget {
 	 */
 	public function widget( $args, $instance ) {
 
-		if ( $collection = Collection::get_by_name( $this->get_collection_name() ) ) {
+		if ( $collection = Post_Collection::get_by_name( $this->get_collection_name() ) ) {
 			if ( $this->is_customizer() ) {
 				$collection_item_ids = $collection->get_staged_item_ids();
 			} else {
@@ -104,7 +104,7 @@ class Collection_Widget extends WP_Widget {
 
 		$vars[ 'collection_items' ] = $vars[ 'collection_item_ids' ] = array();
 
-		if ( $collection = Collection::get_by_name( $this->get_collection_name() ) ) {
+		if ( $collection = Post_Collection::get_by_name( $this->get_collection_name() ) ) {
 
 			// Show staged items in the form when doing an update
 			if ( $this->is_customizer_widget_update() ) {
@@ -145,9 +145,9 @@ class Collection_Widget extends WP_Widget {
 	 */
 	public function update( $new_instance, $old_instance ) {
 
-		$collection = Collection::get_by_name( $this->get_collection_name() );
+		$collection = Post_Collection::get_by_name( $this->get_collection_name() );
 		if ( ! $collection ) {
-			$collection = Collection::create( $this->get_collection_name() );
+			$collection = Post_Collection::create( $this->get_collection_name() );
 			if ( is_wp_error( $collection ) ) {
 				return $old_instance;
 			}
@@ -184,15 +184,15 @@ class Collection_Widget extends WP_Widget {
 		$posted_items = json_decode( wp_unslash( $_POST['customized'] ), true );
 		foreach( $posted_items as $key => $values ) {
 
-			if ( false === strpos( $key, 'widget_collection_widget' ) ) {
+			if ( false === strpos( $key, 'widget_post_collection_widget' ) ) {
 				continue;
 			}
 
 			$parts = explode( '[', rtrim( $key, ']') );
-			$name = 'widget-collection_widget-' . (int) $parts[1];
+			$name = 'widget-post_collection_widget-' . (int) $parts[1];
 			$decoded = maybe_unserialize( base64_decode( $values['encoded_serialized_instance'], true ) );
 
-			$collection = Collection::get_by_name( $name );
+			$collection = Post_Collection::get_by_name( $name );
 			if ( $collection && isset( $decoded['collection_items_stash'] ) ) {
 				$collection->set_published_item_ids( array_map( 'absint', $decoded['collection_items_stash'] ) );
 			}
