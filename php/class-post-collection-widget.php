@@ -111,7 +111,9 @@ class Post_Collection_Widget extends WP_Widget {
 			}
 
 			// Reset the Customizer if needed, but only on initial page load
-			if ( $this->is_customizer() && empty( $_POST['wp_customize'] ) ) {
+			if ( $this->is_customizer()
+				&& empty( $_POST['wp_customize'] )
+				&& $collection->get_customizer_item_ids() !== $vars['collection_item_ids'] ) {
 				$collection->set_customizer_item_ids( $vars['collection_item_ids'] );
 			}
 
