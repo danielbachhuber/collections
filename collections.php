@@ -160,12 +160,15 @@ class Collections {
 		wp_enqueue_script( 'collections' );
 		wp_enqueue_style( 'collections' );
 
+		wp_enqueue_style( 'collection-control', Collections()->get_url( 'css/collection-control.css' ), array( 'collections' ) );
+		wp_enqueue_script( 'collection-control', Collections()->get_url( 'js/collection-control.js' ), array( 'jquery', 'jquery-ui-sortable', 'collections' ) );
+
 		if ( is_admin() && ! has_action( 'admin_footer', array( $this, 'render_add_post_modal' ) ) ) {
-			add_action( 'admin_footer', array( $this, 'render_add_post_modal' ) );
+			add_action( 'admin_footer', array( $this, 'render_templates' ) );
 		}
 
 		if ( ! empty( $wp_customize ) && ! has_action( 'customize_controls_print_footer_scripts', array( $this, 'render_add_post_modal' )) ) {
-			add_action( 'customize_controls_print_footer_scripts', array( $this, 'render_add_post_modal' ) );
+			add_action( 'customize_controls_print_footer_scripts', array( $this, 'render_templates' ) );
 		}
 
 	}
@@ -173,9 +176,10 @@ class Collections {
 	/**
 	 * Render the HTML associated with the add post modal
 	 */
-	public function render_add_post_modal() {
+	public function render_templates() {
 
 		echo $this->get_view( 'add-post-modal' );
+		echo $this->get_view( 'single-collection-item' );
 
 	}
 

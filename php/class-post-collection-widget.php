@@ -88,9 +88,6 @@ class Post_Collection_Widget extends WP_Widget {
 
 		Collections()->enqueue_assets();
 
-		wp_enqueue_style( 'collection-widget', Collections()->get_url( 'css/collection-widget.css' ) );
-		wp_enqueue_script( 'collection-widget', Collections()->get_url( 'js/collection-widget.js' ), array( 'jquery', 'customize-widgets', 'jquery-ui-sortable', 'collections' ) );
-
 		$vars = array(
 			'title_field_id'              => $this->get_field_id( 'title' ),
 			'title_field_name'            => $this->get_field_name( 'title' ),
@@ -124,15 +121,6 @@ class Post_Collection_Widget extends WP_Widget {
 		}
 
 		echo Collections()->get_view( 'widget-form', $vars );
-
-		// Only add the collection item script template once
-		if ( ! has_action( 'admin_footer', array( $this, 'render_widget_collection_item' ) ) ) {
-			add_action( 'admin_footer', array( $this, 'render_widget_collection_item' ) );
-		}
-
-		if ( ! empty( $wp_customize ) && ! has_action( 'customize_controls_print_footer_scripts', array( $this, 'render_widget_collection_item' )) ) {
-			add_action( 'customize_controls_print_footer_scripts', array( $this, 'render_widget_collection_item' ) );
-		}
 
 	}
 
@@ -198,13 +186,6 @@ class Post_Collection_Widget extends WP_Widget {
 			}
 		}
 
-	}
-
-	/**
-	 * Render script templates only once
-	 */
-	public function render_widget_collection_item() {
-		echo Collections()->get_view( 'single-collection-item' );
 	}
 
 }
