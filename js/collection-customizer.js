@@ -32,13 +32,13 @@
 
 			this.previewer.bind( 'rendered-collections', $.proxy( function( renderedCollections ) {
 
-				$.each( renderedCollections, $.proxy( function( name, items ) {
+				$.each( renderedCollections, $.proxy( function( name, data ) {
 
-					if ( $( '#customize-controls #accordion-section-collection_section_' + name ).length ) {
+					if ( $( '#customize-controls #accordion-section-collection_section_' + data.slug ).length ) {
 						return;
 					}
 
-					this.renderCollectionControl( name, items );
+					this.renderCollectionControl( name, data );
 
 				}, this ) );
 
@@ -49,32 +49,42 @@
 		/**
 		 * Render a control for a Collection
 		 */
-		renderCollectionControl: function( name, items ) {
+		renderCollectionControl: function( name, data ) {
 
 			// Set up DOM
 			var clone = this.prototypeControl.clone();
-			var collectionControlHTML = clone.wrap('<div>').parent().html().replace(/__prototype__/g, name );
+			var collectionControlHTML = clone.wrap('<div>').parent().html().replace(/__prototype__/g, data.slug );
 			collectionControlHTML = $( collectionControlHTML );
 			var id = collectionControlHTML.attr( 'id' );
-			collectionControlHTML.find( 'h3' ).append( name );
+			collectionControlHTML.find( 'h3' ).append( ' ' + name );
 			this.prototypeControl.after( collectionControlHTML );
 			var control = $.extend( {}, collectionControl );
 			control.init( collectionControlHTML );
+			if ( data.items.length > 0 ) {
+				control.selectPosts( data.items );
+			}
 
 			// Set up Customizer
-			var settingId = 'collection_setting_' + name;
+			var settingId = 'collection_setting_' + data.slug;
+			var settingArgs = {
+				transport: 'refresh',
+				previewer: this.previewer
+			};
+			var setting = api.create( settingId, settingId, {}, settingArgs );
+
 			var controlType = 'text';
 			api.control.add( settingId, new api.Control( settingId, {
 				params: {
 					settings: {
 						'default': settingId
 					},
-					type: controlType,
-					is_new: false
-				},
-				previewer: this.previewer
+					type: controlType
+				}
 			} ) );
 
+			$('input.collection-item-ids', collectionControlHTML ).on( 'change', function(){
+				setting.set( $(this).val().split( ',' ) );
+			});
 
 		}
 

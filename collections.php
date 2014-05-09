@@ -237,6 +237,16 @@ class Collections {
 		return plugins_url( $path, __FILE__ );
 	}
 
+	/**
+	 * Whether or not we're currently in the Customizer
+	 *
+	 * @return bool
+	 */
+	public function is_customizer_preview() {
+		global $wp_customize;
+		return ( isset( $wp_customize ) && $wp_customize->is_preview() ) ;
+	}
+
 
 	/**
 	 * Get the rendering of a given view

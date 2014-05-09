@@ -66,6 +66,7 @@ var collectionControl = (function( $, wp ){
 
 			$( 'input.collection-item-ids', this.el ).val( item_ids.join( ',' ) );
 			$( 'input.collection-item-ids', this.el ).trigger( 'change' );
+
 		},
 
 		selectPosts: function( posts ) {

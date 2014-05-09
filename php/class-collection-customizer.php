@@ -75,6 +75,61 @@ class Collection_Customizer {
 			'type'               => 'text'
 			) ) );
 
+		// Dynamically register controls as settings
+		if ( ! empty( $_POST['customized'] ) ) {
+			$posted_items = json_decode( wp_unslash( $_POST['customized'] ), true );
+			foreach( $posted_items as $key => $values ) {
+
+				if ( false === strpos( $key, 'collection_setting_' ) || 'collection_setting___prototype__' === $key ) {
+					continue;
+				}
+
+
+				$wp_customize->add_setting( $key, array(
+					'type'               => $key,
+					'sanitize'           => 'sanitize_text_field',
+					) );
+
+				add_action( 'customize_preview_' . $key, array( $this, 'action_customize_save_collection' ) );
+				add_action( 'customize_update_' . $key, array( $this, 'action_customize_save_collection' ) );
+
+			}
+
+		}
+
+	}
+
+	/**
+	 * Allow previewing and updating of a standalone collection
+	 */
+	public function action_customize_save_collection() {
+
+		// current_filter() is for backwards compat even though these are actions
+		if ( 0 === strpos( current_filter(), 'customize_update_' ) ) {
+			$action = 'update';
+			$collection_name = str_replace( 'customize_update_collection_setting_', '', current_filter() );
+		} else if ( 0 === strpos( current_filter(), 'customize_preview_' ) ) {
+			$action = 'preview';
+			$collection_name = str_replace( 'customize_preview_collection_setting_', '', current_filter() );
+		} else {
+			return;
+		}
+
+		$collection = Post_Collection::get_by_name( $collection_name );
+		if ( ! $collection ) {
+			$collection = Post_Collection::create( $collection_name );
+		}
+
+		$posted_items = json_decode( wp_unslash( $_POST['customized'] ), true );
+		$key = 'collection_setting_' . $collection_name;
+		$values = ! empty( $posted_items[ $key ] ) ? array_map( 'intval', $posted_items[ $key ] ) : array();
+		if ( 'update' == $action ) {
+			$collection->set_customizer_item_ids( $values );
+			$collection->set_published_item_ids( $values );
+		} else if ( 'preview' == $action ) {
+			$collection->set_customizer_item_ids( $values );
+		}
+
 	}
 
 	/**
@@ -135,14 +190,17 @@ class Collection_Customizer {
 		}
 
 		$collection = Post_Collection::get_by_name( $name );
-		$json_posts = array();
+		$data = array(
+			'slug'         => sanitize_title( $name ),
+			'items'        => array(),
+			);
 		if ( $collection ) {
-			foreach( $collection->get_published_items() as $post ) {
-				$json_posts[] = Collections()->get_post_for_json( $post );
+			foreach( $collection->get_customizer_items() as $post ) {
+				$data['items'][] = Collections()->get_post_for_json( $post );
 			}
 		}
 
-		$this->rendered_collections[ $name ] = $json_posts;
+		$this->rendered_collections[ $name ] = $data;
 
 	}
 
