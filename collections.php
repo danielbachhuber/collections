@@ -15,6 +15,7 @@ class Collections {
 	private static $instance;
 
 	private $did_register_assets = false;
+	private $customizer;
 
 	public static function get_instance() {
 
@@ -33,6 +34,8 @@ class Collections {
 
 		$this->require_files();
 		$this->setup_actions();
+
+		$this->customizer = Collection_Customizer::get_instance();
 
 	}
 
