@@ -44,6 +44,7 @@ class Collection_Customizer {
 
 		add_action( 'customize_register', array( $this, 'action_customize_register' ) );
 		add_action( 'customize_preview_init', array( $this, 'action_customize_preview_init' ) );
+		add_action( 'customize_save_widget_post_collection_widget', array( $this, 'action_customize_save' ) );
 		add_action( 'customize_controls_enqueue_scripts', array( $this, 'action_customize_controls_enqueue_scripts' ) );
 		add_action( 'collections_get_posts', array( $this, 'action_collections_get_posts' ) );
 
@@ -73,6 +74,33 @@ class Collection_Customizer {
 			'settings'           => 'collection_setting___prototype__',
 			'type'               => 'text'
 			) ) );
+
+	}
+
+	/**
+	 * Customizer Widget doesn't trigger update() on save, so we need to manually
+	 * find our values and save them
+	 */
+	public function action_customize_save() {
+		global $wp_customize;
+
+		$posted_items = json_decode( wp_unslash( $_POST['customized'] ), true );
+		foreach( $posted_items as $key => $values ) {
+
+			if ( 0 === strpos( $key, 'widget_post_collection_widget' ) ) {
+
+				$parts = explode( '[', rtrim( $key, ']') );
+				$name = 'widget-post_collection_widget-' . (int) $parts[1];
+				$decoded = maybe_unserialize( base64_decode( $values['encoded_serialized_instance'], true ) );
+
+				$collection = Post_Collection::get_by_name( $name );
+				if ( $collection && isset( $decoded['collection_items_stash'] ) ) {
+					$collection->set_published_item_ids( array_map( 'absint', $decoded['collection_items_stash'] ) );
+				}
+
+			}
+
+		}
 
 	}
 
