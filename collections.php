@@ -222,6 +222,22 @@ class Collections {
 	}
 
 	/**
+	 * Get the posts for a given Collection
+	 *
+	 * @param string $name
+	 * @return array
+	 */
+	public function get_posts( $name ) {
+
+		$collection = Collection::get_by_name( $name );
+		if ( ! $collection ) {
+			return array();
+		}
+
+		return $collection->get_items();
+	}
+
+	/**
 	 * Get the URL for a plugin asset
 	 *
 	 * @param string $path

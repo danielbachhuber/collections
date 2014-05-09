@@ -27,6 +27,15 @@ class Collection_Customizer {
 	}
 
 	/**
+	 * Require any necessary files
+	 */
+	private function require_files() {
+
+		require_once dirname( __FILE__ ) . '/class-customize-collection-control.php';
+
+	}
+
+	/**
 	 * Set up actions we're using in the Customizer
 	 */
 	private function setup_actions() {
@@ -41,7 +50,27 @@ class Collection_Customizer {
 	 * Register our settings and controls used in the Customizer
 	 */
 	public function action_customize_register() {
-		
+		global $wp_customize;
+
+		$this->require_files();
+
+		$wp_customize->add_section( 'collection_section__prototype__', array(
+			'title'              => __( 'Collection:', 'collections' ),
+			'priority'           => 40,
+			) );
+
+		$wp_customize->add_setting( 'collection_setting__prototype__', array(
+			'type'               => 'collection',
+			'sanitize'           => 'sanitize_text_field',
+			) );
+
+		$wp_customize->add_control( new Customize_Collection_Control( $wp_customize, 'collection_control__prototype__', array(
+			'label'              => false,
+			'section'            => 'collection_section__prototype__',
+			'settings'           => 'collection_setting__prototype__',
+			'type'               => 'text'
+			) ) );
+
 	}
 
 	/**
@@ -49,6 +78,7 @@ class Collection_Customizer {
 	 */
 	public function action_customize_preview_init() {
 
+		add_action( 'wp_footer', array( $this, 'action_wp_footer' ) );
 	}
 
 	/**
@@ -56,6 +86,14 @@ class Collection_Customizer {
 	 */
 	public function action_customize_controls_enqueue_scripts() {
 
+	}
+
+	/**
+	 * Tell the parent about which Collections were used on this page
+	 */
+	public function action_wp_footer() {
+
+		
 	}
 
 
