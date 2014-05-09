@@ -77,7 +77,7 @@ var collectionWidget = (function( $, wp ){
 			// Reverse order to apply in proper direction
 			posts.reverse();
 
-			var template = wp.template( 'collection-item' );
+			var template = wp.template( 'single-collection-item' );
 			$.each( posts, $.proxy( function( index, post ) {
 				var data = {
 					post: post

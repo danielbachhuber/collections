@@ -204,7 +204,7 @@ class Post_Collection_Widget extends WP_Widget {
 	 * Render script templates only once
 	 */
 	public function render_widget_collection_item() {
-		echo Collections()->get_view( 'widget-collection-item' );
+		echo Collections()->get_view( 'single-collection-item' );
 	}
 
 }
