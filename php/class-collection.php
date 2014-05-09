@@ -145,6 +145,37 @@ abstract class Collection {
 	}
 
 	/**
+	 * Get the items for the Customizer version of this collection.
+	 *
+	 * @return array
+	 */
+	abstract public function get_customizer_items();
+
+	/**
+	 * Get the IDs of items for the Customizer version of this collection.
+	 *
+	 * @return array
+	 */
+	public function get_customizer_item_ids() {
+
+		if ( $item_ids = $this->get_meta( 'customizer_item_ids' ) ) {
+			return $item_ids;
+		} else {
+			return array();
+		}
+
+	}
+
+	/**
+	 * Set thes IDs of items for the Customizer version of this collection.
+	 *
+	 * @param array
+	 */
+	public function set_customizer_item_ids( $item_ids ) {
+		$this->set_meta( 'customizer_item_ids', $item_ids );
+	}
+
+	/**
 	 * Get a meta value for this collection
 	 *
 	 * @param string $key

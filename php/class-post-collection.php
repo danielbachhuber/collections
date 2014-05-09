@@ -39,4 +39,22 @@ class Post_Collection extends Collection {
 
 	}
 
+	/**
+	 * Get the posts for the Customizer version of this collection.
+	 *
+	 * @todo pre-fetch with WP_Query
+	 *
+	 * @return array
+	 */
+	public function get_customizer_items() {
+
+		$posts = array();
+		foreach( $this->get_customizer_item_ids() as $post_id ) {
+			$posts[] = get_post( $post_id );
+		}
+		return $posts;
+
+
+	}
+
 }

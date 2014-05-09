@@ -61,7 +61,7 @@ class Post_Collection_Widget extends WP_Widget {
 
 		if ( $collection = Post_Collection::get_by_name( $this->get_collection_name() ) ) {
 			if ( $this->is_customizer() ) {
-				$collection_item_ids = $collection->get_staged_item_ids();
+				$collection_item_ids = $collection->get_customizer_item_ids();
 			} else {
 				$collection_item_ids = $collection->get_published_item_ids();
 			}
@@ -106,16 +106,16 @@ class Post_Collection_Widget extends WP_Widget {
 
 		if ( $collection = Post_Collection::get_by_name( $this->get_collection_name() ) ) {
 
-			// Show staged items in the form when doing an update
+			// Show Customizer items in the form when doing an update
 			if ( $this->is_customizer_widget_update() ) {
-				$vars['collection_item_ids'] = $collection->get_staged_item_ids();
+				$vars['collection_item_ids'] = $collection->get_customizer_item_ids();
 			} else {
 				$vars['collection_item_ids'] = $collection->get_published_item_ids();
 			}
 
 			// Reset the Customizer if needed, but only on initial page load
 			if ( $this->is_customizer() && empty( $_POST['wp_customize'] ) ) {
-				$collection->set_staged_item_ids( $vars['collection_item_ids'] );
+				$collection->set_customizer_item_ids( $vars['collection_item_ids'] );
 			}
 
 			foreach( $vars['collection_item_ids'] as $post_id ) {
@@ -164,9 +164,9 @@ class Post_Collection_Widget extends WP_Widget {
 		// Triggers cache bust in Customizer and also used for save
 		$instance['collection_items_stash'] = $instance_items;
 
-		// Doing a customizer preview should only stage collection items.
+		// Doing a customizer preview should only modify Customizer collection items.
 		if ( $this->is_customizer_widget_update() ) {
-			$collection->set_staged_item_ids( $instance_items );
+			$collection->set_customizer_item_ids( $instance_items );
 		} else {
 			$collection->set_published_item_ids( $instance_items );
 		}
