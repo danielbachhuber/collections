@@ -17,10 +17,10 @@
 
 		jQuery('<?php echo "#collection-widget-instance-" . $widget_instance_id; ?>').ready(function($){
 			var parent = $('<?php echo "#collection-widget-instance-" . $widget_instance_id; ?>').closest('.widget');
-			collectionWidget.init( parent );
-
+			var widget = $.extend({}, collectionWidget );
+			widget.init( parent );
 			<?php if ( ! empty( $collection_items ) ) : ?>
-				collectionWidget.selectPosts( $.parseJSON( '<?php echo json_encode( $collection_items ); ?>' ) );
+				widget.selectPosts( $.parseJSON( '<?php echo json_encode( $collection_items ); ?>' ) );
 			<?php endif; ?>
 
 		});

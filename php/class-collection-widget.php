@@ -89,7 +89,7 @@ class Collection_Widget extends WP_Widget {
 		Collections()->enqueue_assets();
 
 		wp_enqueue_style( 'collection-widget', Collections()->get_url( 'css/collection-widget.css' ) );
-		wp_enqueue_script( 'collection-widget', Collections()->get_url( 'js/collection-widget.js' ), array( 'jquery', 'jquery-ui-sortable', 'collections' ) );
+		wp_enqueue_script( 'collection-widget', Collections()->get_url( 'js/collection-widget.js' ), array( 'jquery', 'customize-widgets', 'jquery-ui-sortable', 'collections' ) );
 
 		$vars = array(
 			'title_field_id'              => $this->get_field_id( 'title' ),
