@@ -26,8 +26,18 @@ abstract class Collection {
 	 */
 	public static function get_by_name( $name ) {
 		global $wpdb;
+		static $id_cache;
 
-		$post_id = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_name=%s AND post_type=%s", $name, self::$post_type ) );
+		if ( ! isset( $id_cache ) ) {
+			$id_cache = array();
+		}
+
+		if ( isset( $id_cache[ $name ] ) ) {
+			$post_id = $id_cache[ $name ];
+		} else {
+			$post_id = $id_cache[ $name ] = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_name=%s AND post_type=%s", $name, self::$post_type ) );
+		}
+
 		if ( ! $post_id ) {
 			return false;
 		}
