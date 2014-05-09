@@ -1,11 +1,12 @@
-(function( $, wp ){
+var collectionWidget = (function( $, wp ){
+	/*global wp, jQuery, collectionAddPostModal */
+	'use strict';
 
 	$(document).on( 'widget-added', function( e, data ) {
-
-		collectionWidget.init( data );
+		self.init( data );
 	});
 
-	collectionWidget = {
+	var self = {
 
 		/**
 		 * Initialize the collectionWidget interface
@@ -90,5 +91,7 @@
 		}
 
 	};
+
+	return self;
 
 })( jQuery, wp );

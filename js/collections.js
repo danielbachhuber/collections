@@ -1,6 +1,8 @@
-(function( $ ){
+/*global jQuery, alert */
+var collectionAddPostModal = (function( $ ){
+	"use strict";
 
-	collectionAddPostModal = {
+	var self = {
 
 		resultPosts: [],
 		selectedPosts: [],
@@ -165,5 +167,7 @@
 		}
 
 	};
+
+	return self;
 
 })( jQuery );
