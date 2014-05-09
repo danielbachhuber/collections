@@ -57,20 +57,20 @@ class Collection_Customizer {
 
 		$this->require_files();
 
-		$wp_customize->add_section( 'collection_section__prototype__', array(
+		$wp_customize->add_section( 'collection_section___prototype__', array(
 			'title'              => __( 'Collection:', 'collections' ),
 			'priority'           => 40,
 			) );
 
-		$wp_customize->add_setting( 'collection_setting__prototype__', array(
+		$wp_customize->add_setting( 'collection_setting___prototype__', array(
 			'type'               => 'collection',
 			'sanitize'           => 'sanitize_text_field',
 			) );
 
-		$wp_customize->add_control( new Customize_Collection_Control( $wp_customize, 'collection_control__prototype__', array(
+		$wp_customize->add_control( new Customize_Collection_Control( $wp_customize, 'collection_control___prototype__', array(
 			'label'              => false,
-			'section'            => 'collection_section__prototype__',
-			'settings'           => 'collection_setting__prototype__',
+			'section'            => 'collection_section___prototype__',
+			'settings'           => 'collection_setting___prototype__',
 			'type'               => 'text'
 			) ) );
 
