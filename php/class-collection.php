@@ -32,6 +32,8 @@ abstract class Collection {
 			$id_cache = array();
 		}
 
+		$name = sanitize_title( $name );
+
 		if ( isset( $id_cache[ $name ] ) ) {
 			$post_id = $id_cache[ $name ];
 		} else {
@@ -60,7 +62,7 @@ abstract class Collection {
 
 		$post_data = array(
 			'post_title'    => $name,
-			'post_name'     => $name,
+			'post_name'     => sanitize_title( $name ),
 			'post_type'     => self::$post_type,
 			'post_status'   => 'publish',
 			);
@@ -80,6 +82,24 @@ abstract class Collection {
 	 */
 	public function get_id() {
 		return $this->post->ID;
+	}
+
+	/**
+	 * Get the name of this collection
+	 *
+	 * @return string
+	 */
+	public function get_name() {
+		return $this->post->post_title;
+	}
+
+	/**
+	 * Get the slug of this collection
+	 *
+	 * @return string
+	 */
+	public function get_slug() {
+		return $this->post->post_name;
 	}
 
 	/**
