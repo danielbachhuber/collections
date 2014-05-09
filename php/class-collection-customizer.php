@@ -106,7 +106,15 @@ class Collection_Customizer {
 			return;
 		}
 
-		$this->rendered_collections[] = $name;
+		$collection = Post_Collection::get_by_name( $name );
+		$json_posts = array();
+		if ( $collection ) {
+			foreach( $collection->get_published_items() as $post ) {
+				$json_posts[] = Collections()->get_post_for_json( $post );
+			}
+		}
+
+		$this->rendered_collections[ $name ] = $json_posts;
 
 	}
 

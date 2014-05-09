@@ -11,10 +11,15 @@
 	 */
 	api.collectionCustomizer = {
 
+		renderedCollections: {},
+		prototypeControl: false,
+
 		/**
 		 * Initialize the Collection Customizer
 		 */
 		init: function() {
+
+			this.prototypeControl = $( '#customize-controls #accordion-section-collection_section___prototype__' );
 
 			this.bindEvents();
 
@@ -27,9 +32,31 @@
 
 			this.previewer.bind( 'rendered-collections', $.proxy( function( renderedCollections ) {
 
-				// Render the collection controls
+				$.each( renderedCollections, $.proxy( function( name, items ) {
+
+					if ( $( '#customize-controls #accordion-section-collection_section_' + name ).length ) {
+						return;
+					}
+
+					this.renderCollectionControl( name, items );
+
+				}, this ) );
 
 			}, this ) );
+
+		},
+
+		/**
+		 * Render a control for a Collection
+		 */
+		renderCollectionControl: function( name, items ) {
+
+			var clone = this.prototypeControl.clone();
+			var collectionControlHTML = clone.wrap('<div>').parent().html().replace(/__prototype__/, name );
+			var collectionControl = $( collectionControlHTML );
+			collectionControl.find( 'h3' ).append( name );
+
+			this.prototypeControl.after( collectionControl );
 
 		}
 
