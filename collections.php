@@ -121,7 +121,7 @@ class Collections {
 		}
 
 		$query_args = array(
-			'post_type'    => 'post',
+			'post_type'    => apply_filters( 'collections_supported_post_types', array( 'post' ) ),
 			'post_status'  => 'publish',
 			);
 		if ( ! empty( $_GET['s'] ) ) {
