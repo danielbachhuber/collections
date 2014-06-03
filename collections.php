@@ -15,6 +15,7 @@ class Collections {
 	private static $instance;
 
 	private $did_register_assets = false;
+	private $customizer;
 
 	public static function get_instance() {
 
@@ -34,6 +35,8 @@ class Collections {
 		$this->require_files();
 		$this->setup_actions();
 
+		$this->customizer = Collection_Customizer::get_instance();
+
 	}
 
 	/**
@@ -41,8 +44,12 @@ class Collections {
 	 */
 	private function require_files() {
 
+		require_once dirname( __FILE__ ). '/template-tags.php';
+
 		require_once dirname( __FILE__ ) . '/php/class-collection.php';
-		require_once dirname( __FILE__ ) . '/php/class-collection-widget.php';
+		require_once dirname( __FILE__ ) . '/php/class-post-collection.php';
+		require_once dirname( __FILE__ ) . '/php/class-post-collection-widget.php';
+		require_once dirname( __FILE__ ) . '/php/class-collection-customizer.php';
 
 	}
 
@@ -114,7 +121,7 @@ class Collections {
 		}
 
 		$query_args = array(
-			'post_type'    => 'post',
+			'post_type'    => apply_filters( 'collections_supported_post_types', array( 'post' ) ),
 			'post_status'  => 'publish',
 			);
 		if ( ! empty( $_GET['s'] ) ) {
@@ -136,7 +143,7 @@ class Collections {
 	 */
 	public function action_widgets_init() {
 
-		register_widget( 'Collection_Widget' );
+		register_widget( 'Post_Collection_Widget' );
 
 	}
 
@@ -153,12 +160,15 @@ class Collections {
 		wp_enqueue_script( 'collections' );
 		wp_enqueue_style( 'collections' );
 
+		wp_enqueue_style( 'collection-control', Collections()->get_url( 'css/collection-control.css' ), array( 'collections' ) );
+		wp_enqueue_script( 'collection-control', Collections()->get_url( 'js/collection-control.js' ), array( 'jquery', 'jquery-ui-sortable', 'collections' ) );
+
 		if ( is_admin() && ! has_action( 'admin_footer', array( $this, 'render_add_post_modal' ) ) ) {
-			add_action( 'admin_footer', array( $this, 'render_add_post_modal' ) );
+			add_action( 'admin_footer', array( $this, 'render_templates' ) );
 		}
 
 		if ( ! empty( $wp_customize ) && ! has_action( 'customize_controls_print_footer_scripts', array( $this, 'render_add_post_modal' )) ) {
-			add_action( 'customize_controls_print_footer_scripts', array( $this, 'render_add_post_modal' ) );
+			add_action( 'customize_controls_print_footer_scripts', array( $this, 'render_templates' ) );
 		}
 
 	}
@@ -166,9 +176,10 @@ class Collections {
 	/**
 	 * Render the HTML associated with the add post modal
 	 */
-	public function render_add_post_modal() {
+	public function render_templates() {
 
 		echo $this->get_view( 'add-post-modal' );
+		echo $this->get_view( 'single-collection-item' );
 
 	}
 
@@ -224,6 +235,16 @@ class Collections {
 	 */
 	public function get_url( $path = '' ) {
 		return plugins_url( $path, __FILE__ );
+	}
+
+	/**
+	 * Whether or not we're currently in the Customizer
+	 *
+	 * @return bool
+	 */
+	public function is_customizer_preview() {
+		global $wp_customize;
+		return ( isset( $wp_customize ) && $wp_customize->is_preview() ) ;
 	}
 
 

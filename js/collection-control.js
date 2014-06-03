@@ -1,15 +1,11 @@
-var collectionWidget = (function( $, wp ){
+var collectionControl = (function( $, wp ){
 	/*global wp, jQuery, collectionAddPostModal */
 	'use strict';
-
-	$(document).on( 'widget-added', function( e, data ) {
-		self.init( data );
-	});
 
 	var self = {
 
 		/**
-		 * Initialize the collectionWidget interface
+		 * Initialize the collectionControl interface
 		 */
 		init: function( el ) {
 
@@ -39,7 +35,7 @@ var collectionWidget = (function( $, wp ){
 			}
 
 			// Instantiates the modal to add a new post to the collection
-			this.el.on( 'click.collection-add-post', '.collection-widget a.add-post', $.proxy( function( e ) {
+			this.el.on( 'click.collection-add-post', 'a.add-post', $.proxy( function( e ) {
 
 				e.preventDefault();
 
@@ -49,7 +45,7 @@ var collectionWidget = (function( $, wp ){
 			}, this ) );
 
 			// Removes an item from the collection
-			this.el.on( 'click.collection-remove-item', '.collection-widget a.collection-item-remove-action', $.proxy( function( e ) {
+			this.el.on( 'click.collection-remove-item', 'a.collection-item-remove-action', $.proxy( function( e ) {
 
 				e.preventDefault();
 				$( e.currentTarget ).closest( 'li.collection-item' ).remove();
@@ -68,8 +64,9 @@ var collectionWidget = (function( $, wp ){
 				item_ids.push( $( this ).data( 'post-id' ) );
 			});
 
-			$( 'input.collection-widget-item-ids', this.el ).val( item_ids.join( ',' ) );
-			$( 'input.collection-widget-item-ids', this.el ).trigger( 'change' );
+			$( 'input.collection-item-ids', this.el ).val( item_ids.join( ',' ) );
+			$( 'input.collection-item-ids', this.el ).trigger( 'change' );
+
 		},
 
 		selectPosts: function( posts ) {
@@ -77,7 +74,7 @@ var collectionWidget = (function( $, wp ){
 			// Reverse order to apply in proper direction
 			posts.reverse();
 
-			var template = wp.template( 'collection-item' );
+			var template = wp.template( 'single-collection-item' );
 			$.each( posts, $.proxy( function( index, post ) {
 				var data = {
 					post: post

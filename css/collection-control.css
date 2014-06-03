@@ -1,4 +1,4 @@
-.collection-widget li.collection-item {
+.collection-control li.collection-item {
 	background-color: #fafafa;
 	padding-left: 10px;
 	padding-right: 10px;
@@ -9,16 +9,16 @@
 	border: 1px solid #e5e5e5;
 }
 
-.collection-widget li.collection-item:hover {
+.collection-control li.collection-item:hover {
 	cursor: move;
 }
 
-.collection-widget li.collection-item h5 {
+.collection-control li.collection-item h5 {
 	font-size: 14px;
 	margin-top: 5px;
 	margin-bottom: 6px;
 }
 
-.collection-widget li.collection-item .collection-item-actions {
+.collection-control li.collection-item .collection-item-actions {
 	font-size: 12px;
 }

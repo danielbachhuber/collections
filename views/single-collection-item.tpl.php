@@ -1,4 +1,4 @@
-<script type="text/html" id="tmpl-collection-item">
+<script type="text/html" id="tmpl-single-collection-item">
 	<li class="collection-item" data-post-id="{{ data.post.ID }}">
 		<h5>{{ data.post.post_title }}</h5>
 		<div class="collection-item-actions">
